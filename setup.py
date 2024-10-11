@@ -1,12 +1,12 @@
-from setuptools import setup
+from setuptools import setup, find_packages
 
 setup(
     name='dsep',
-    py_modules=['dsep'],
+    packages=find_packages(),
     version='0.1.0',
     entry_points={
         'console_scripts': [
-            'dsep = dsep:app',
+            'dsep = dsep.dsep:app',
         ],
     },
 )
