@@ -1,2 +1,4 @@
 pyAgrum
 click
+pytest
+pyparsing
