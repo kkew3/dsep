@@ -2,3 +2,4 @@ pyAgrum
 click
 pytest
 pyparsing
+networkx
