@@ -1,3 +1,5 @@
+import pytest
+
 from dsep import spec_parser as m
 
 
@@ -34,3 +36,16 @@ x -- y -> z;
             m.EdgeGroup(False, ['x'], ['y']),
             m.EdgeGroup(True, ['y'], ['z']),
         ]
+
+
+class TestBuildGraph:
+    def test_directed_dag(self):
+        with pytest.raises(m.DirectedCyclicError):
+            m.build_graph(m.parse_to_edge_groups('a -> b -> a'))
+
+    def test_undirected_dag(self):
+        m.build_graph(m.parse_to_edge_groups('a -- b -- a'))
+
+    def test_mixed_edge_types(self):
+        with pytest.raises(m.MixedEdgeTypesError):
+            m.build_graph(m.parse_to_edge_groups('a -> b -- c'))

@@ -3,8 +3,11 @@ Defines the graph spec parser.
 """
 
 import dataclasses
+import itertools
 
 import pyparsing as pp
+import networkx as nx
+from networkx.algorithms import is_directed_acyclic_graph
 
 
 def define_grammar():
@@ -44,3 +47,28 @@ def parse_to_edge_groups(string: str) -> list[EdgeGroup]:
             nodes_b = [nodes_b] if isinstance(nodes_b, str) else list(nodes_b)
             edge_groups.append(EdgeGroup(directed, nodes_a, nodes_b))
     return edge_groups
+
+
+class MixedEdgeTypesError(Exception):
+    """Raised if directed and undirected edges are mixed in one graph."""
+    pass
+
+
+class DirectedCyclicError(Exception):
+    """Raised if a directed graph is cyclic."""
+    pass
+
+
+def build_graph(edge_groups: list[EdgeGroup]) -> nx.Graph | nx.DiGraph:
+    if all(e.directed for e in edge_groups):
+        graph = nx.DiGraph()
+    elif all(not e.directed for e in edge_groups):
+        graph = nx.Graph()
+    else:
+        raise MixedEdgeTypesError
+    for e in edge_groups:
+        graph.add_edges_from(itertools.product(e.nodes_a, e.nodes_b))
+    if isinstance(graph, nx.DiGraph):
+        if not is_directed_acyclic_graph(graph):
+            raise DirectedCyclicError
+    return graph
