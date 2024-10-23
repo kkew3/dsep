@@ -9,4 +9,14 @@ setup(
             'dsep = dsep.dsep:app',
         ],
     },
+    install_requires=[
+        'click',
+        'pyparsing',
+        'networkx>=3.3',
+    ],
+    extras_require={
+        'dev': [
+            'pytest',
+        ],
+    },
 )
